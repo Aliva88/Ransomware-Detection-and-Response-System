@@ -1,0 +1,34 @@
+app:
+  name: "Ransomware Detection and Response System"
+  version: "1.0"
+
+monitoring:
+  folders:
+    - "data/sandbox"
+
+  simulation_mode: true
+
+  sliding_window_seconds: 60
+
+detection:
+  entropy_threshold: 7.5
+  modified_files_threshold: 20
+  rename_threshold: 10
+  extension_change_threshold: 5
+
+scoring:
+  rapid_encryption: 40
+  mass_rename: 30
+  high_entropy: 25
+  cpu_spike: 15
+  unknown_program: 10
+
+logging:
+  directory: "logs"
+  level: "INFO"
+
+database:
+  url: "sqlite:///data/rdrs.db"
+
+quarantine:
+  directory: "data/quarantine"

@@ -1,0 +1,31 @@
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# SQLite database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+
+# Quarantine
+data/quarantine/
+
+# Temporary sandbox test files
+data/sandbox/
+
+# Environment / secrets
+.env
+
+# VS Code
+.vscode/
+
+# Python test/cache
+.pytest_cache/
+.coverage
+htmlcov/
