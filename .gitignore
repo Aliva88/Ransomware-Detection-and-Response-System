@@ -29,3 +29,11 @@ data/sandbox/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Local test files
+app/test_database.py
+app/test_detection.py
+app/test_extension_detection.py
+app/test_integration.py
+app/test_rename_event.py
+app/test_sliding_window.py
