@@ -15,6 +15,6 @@ SessionLocal = sessionmaker(
 )
 
 Base = declarative_base()
-from models import Event, Process, Score, Alert, Incident
+from app.models import Event, Process, Score, Alert, Incident
 
 Base.metadata.create_all(bind=engine)
