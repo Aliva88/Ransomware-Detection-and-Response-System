@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ransomware Detection & Response System</title>
+
+    <link rel="stylesheet" href="/dashboard/style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div>
+            <h1>Ransomware Detection & Response System</h1>
+            <p>Security Monitoring Dashboard</p>
+        </div>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            <span id="systemStatus">Checking...</span>
+        </div>
+    </header>
+
+
+    <main class="dashboard">
+
+        <section class="cards">
+
+            <div class="card">
+                <h3>System Status</h3>
+                <div class="card-value" id="statusValue">--</div>
+                <p>Current system state</p>
+            </div>
+
+            <div class="card">
+                <h3>Threat Score</h3>
+                <div class="card-value" id="threatScore">--</div>
+                <p>Current risk score</p>
+            </div>
+
+            <div class="card">
+                <h3>Threat Level</h3>
+                <div class="card-value" id="threatLevel">--</div>
+                <p>Current threat classification</p>
+            </div>
+
+            <div class="card">
+                <h3>Open Incidents</h3>
+                <div class="card-value" id="openIncidents">--</div>
+                <p>Incidents requiring attention</p>
+            </div>
+
+        </section>
+
+
+        <section class="threat-section">
+
+            <div class="section-title">
+                <h2>Threat Monitoring</h2>
+                <span id="simulationMode">Simulation Mode: --</span>
+            </div>
+
+            <div class="score-container">
+
+                <div class="score-circle">
+                    <span id="scoreDisplay">0</span>
+                    <small>/ 100</small>
+                </div>
+
+                <div class="threat-info">
+                    <h2 id="threatText">Threat Level: --</h2>
+                    <p>
+                        The current threat score is retrieved from the
+                        ransomware detection engine.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="incidents-section">
+
+            <div class="section-title">
+                <h2>Security Incidents</h2>
+                <button onclick="loadDashboard()">Refresh</button>
+            </div>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Incident Type</th>
+                            <th>Severity</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="incidentTable">
+
+                        <tr>
+                            <td colspan="6">
+                                Loading incidents...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>Ransomware Detection & Response System | Security Monitoring</p>
+    </footer>
+
+
+    <script src="/dashboard/dashboard.js"></script>
+
+</body>
+</html>

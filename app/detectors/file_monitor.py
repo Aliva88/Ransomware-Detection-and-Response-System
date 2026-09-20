@@ -42,7 +42,6 @@ class RDRSEventHandler(FileSystemEventHandler):
                 f"Suspicious activity detected: {result}"
             )
 
-
     def on_created(self, event):
 
         if not event.is_directory:
@@ -50,7 +49,6 @@ class RDRSEventHandler(FileSystemEventHandler):
                 "CREATE",
                 event.src_path
             )
-
 
     def on_modified(self, event):
 
@@ -60,7 +58,6 @@ class RDRSEventHandler(FileSystemEventHandler):
                 event.src_path
             )
 
-
     def on_deleted(self, event):
 
         if not event.is_directory:
@@ -68,7 +65,6 @@ class RDRSEventHandler(FileSystemEventHandler):
                 "DELETE",
                 event.src_path
             )
-
 
     def on_moved(self, event):
 
