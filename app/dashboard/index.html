@@ -1,133 +1,1305 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ransomware Detection & Response System</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/dashboard/style.css">
+<title>RansomShield | System Enrollment</title>
+
+<link rel="stylesheet" href="/dashboard/enrollment.css">
 </head>
 
 <body>
 
-    <header class="header">
+<div class="app-shell">
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            R
+        </div>
+
+        <div class="brand-text">
+
+            <h1>
+                RansomShield
+            </h1>
+
+            <p>
+                Ransomware Detection & Response Platform
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="topbar-right">
+
+        <div class="connection-status">
+            <span class="connection-dot"></span>
+            API CONNECTED
+        </div>
+
+        <div class="user-chip">
+
+            <div class="user-avatar">
+                A
+            </div>
+
+            <div>
+                <strong>Security Admin</strong>
+                <span>Administrator</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<nav class="navigation">
+
+    <div class="nav-title">
+        SECURITY OPERATIONS
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/" class="nav-link active">
+            <span>👤</span>
+            System Enrollment
+        </a>
+
+        <!-- SOC DASHBOARD -->
+        <a href="/dashboard/soc.html" class="nav-link">
+            <span>📊</span>
+            Security Dashboard
+        </a>
+
+        <a href="/dashboard/incidents.html" class="nav-link">
+            <span>❓</span>
+            Incidents
+        </a>
+
+        <a href="/dashboard/detection.html" class="nav-link">
+            <span>📡</span>
+            Detection Engine
+        </a>
+
+        <a href="/dashboard/reports.html" class="nav-link">
+            <span>📑</span>
+            Reports
+        </a>
+
+    </div>
+
+</nav>
+
+
+<main class="main-content">
+
+    <section class="page-header">
+
         <div>
-            <h1>Ransomware Detection & Response System</h1>
-            <p>Security Monitoring Dashboard</p>
+
+            <div class="breadcrumb">
+
+                SECURITY OPERATIONS
+
+                <span>/</span>
+
+                SYSTEM ENROLLMENT
+
+            </div>
+
+            <h2>
+                Add New System
+            </h2>
+
+            <p>
+                Register an endpoint with RansomShield before enabling
+                ransomware monitoring and protection.
+            </p>
+
         </div>
 
-        <div class="system-status">
+        <div class="header-status">
+
             <span class="status-dot"></span>
-            <span id="systemStatus">Checking...</span>
+
+            Enrollment Service Online
+
         </div>
-    </header>
+
+    </section>
 
 
-    <main class="dashboard">
+    <section class="enrollment-layout">
 
-        <section class="cards">
+        <div class="main-card">
 
-            <div class="card">
-                <h3>System Status</h3>
-                <div class="card-value" id="statusValue">--</div>
-                <p>Current system state</p>
-            </div>
+            <div class="card-header">
 
-            <div class="card">
-                <h3>Threat Score</h3>
-                <div class="card-value" id="threatScore">--</div>
-                <p>Current risk score</p>
-            </div>
+                <div>
 
-            <div class="card">
-                <h3>Threat Level</h3>
-                <div class="card-value" id="threatLevel">--</div>
-                <p>Current threat classification</p>
-            </div>
+                    <span class="section-label">
+                        SYSTEM ENROLLMENT
+                    </span>
 
-            <div class="card">
-                <h3>Open Incidents</h3>
-                <div class="card-value" id="openIncidents">--</div>
-                <p>Incidents requiring attention</p>
-            </div>
+                    <h3>
+                        Register Endpoint
+                    </h3>
 
-        </section>
-
-
-        <section class="threat-section">
-
-            <div class="section-title">
-                <h2>Threat Monitoring</h2>
-                <span id="simulationMode">Simulation Mode: --</span>
-            </div>
-
-            <div class="score-container">
-
-                <div class="score-circle">
-                    <span id="scoreDisplay">0</span>
-                    <small>/ 100</small>
-                </div>
-
-                <div class="threat-info">
-                    <h2 id="threatText">Threat Level: --</h2>
                     <p>
-                        The current threat score is retrieved from the
-                        ransomware detection engine.
+                        Enter the basic information of the system you want to protect.
                     </p>
+
+                </div>
+
+                <div class="step-counter">
+
+                    <strong id="currentStep">
+                        01
+                    </strong>
+
+                    <span>
+                        / 03
+                    </span>
+
                 </div>
 
             </div>
 
-        </section>
+
+            <div class="progress-container">
+
+                <div class="progress-step active" id="stepIndicator1">
+
+                    <div class="step-number">
+                        1
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            System Details
+                        </strong>
+
+                        <span>
+                            Identify the endpoint
+                        </span>
+
+                    </div>
+
+                </div>
 
 
-        <section class="incidents-section">
+                <div class="progress-line" id="progressLine1"></div>
 
-            <div class="section-title">
-                <h2>Security Incidents</h2>
-                <button onclick="loadDashboard()">Refresh</button>
+
+                <div class="progress-step" id="stepIndicator2">
+
+                    <div class="step-number">
+                        2
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Verification
+                        </strong>
+
+                        <span>
+                            Authenticate endpoint
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="progress-line" id="progressLine2"></div>
+
+
+                <div class="progress-step" id="stepIndicator3">
+
+                    <div class="step-number">
+                        3
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Protection
+                        </strong>
+
+                        <span>
+                            Activate monitoring
+                        </span>
+
+                    </div>
+
+                </div>
+
             </div>
 
-            <div class="table-container">
 
-                <table>
+            <!-- =====================================================
+                 STEP 1
+            ====================================================== -->
 
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Incident Type</th>
-                            <th>Severity</th>
-                            <th>Status</th>
-                            <th>Description</th>
-                            <th>Timestamp</th>
-                        </tr>
-                    </thead>
+            <div class="form-step active" id="step1">
 
-                    <tbody id="incidentTable">
+                <div class="step-heading">
 
-                        <tr>
-                            <td colspan="6">
-                                Loading incidents...
-                            </td>
-                        </tr>
+                    <span class="step-tag">
+                        01
+                    </span>
 
-                    </tbody>
+                    <div>
 
-                </table>
+                        <h3>
+                            System Information
+                        </h3>
+
+                        <p>
+                            Provide identifying information for this endpoint.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group full">
+
+                        <label for="systemName">
+
+                            System Name
+
+                            <span>*</span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="systemName"
+                            placeholder="Example: Your-Laptop"
+                        >
+
+                        <small>
+                            A friendly name used to identify this system.
+                        </small>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="hostname">
+
+                            Hostname
+
+                            <span>*</span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="hostname"
+                            placeholder="Example: DESKTOP-ABCD"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="ipAddress">
+
+                            IP Address
+
+                            <span>*</span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="ipAddress"
+                            placeholder="Example: 192.168.1.10"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="operatingSystem">
+
+                            Operating System
+
+                            <span>*</span>
+
+                        </label>
+
+                        <select id="operatingSystem">
+
+                            <option value="">
+                                Select operating system
+                            </option>
+
+                            <option value="Windows 11">
+                                Windows 11
+                            </option>
+
+                            <option value="Windows 10">
+                                Windows 10
+                            </option>
+
+                            <option value="Ubuntu Linux">
+                                Ubuntu Linux
+                            </option>
+
+                            <option value="Other Linux">
+                                Other Linux
+                            </option>
+
+                            <option value="macOS">
+                                macOS
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="environment">
+                            Environment
+                        </label>
+
+                        <select id="environment">
+
+                            <option value="Workstation">
+                                Workstation
+                            </option>
+
+                            <option value="Server">
+                                Server
+                            </option>
+
+                            <option value="Development">
+                                Development
+                            </option>
+
+                            <option value="Test">
+                                Test
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="security-notice">
+
+                    <div class="notice-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Authenticator verification required
+                        </strong>
+
+                        <p>
+                            RansomShield will generate a secure authenticator
+                            setup after registration. Monitoring cannot start
+                            until the endpoint is verified.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="existing-system-box">
+
+                    <div class="existing-system-content">
+
+                        <div class="existing-system-icon">
+                            ↻
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Already have a registered system?
+                            </strong>
+
+                            <p>
+                                If this endpoint is already registered,
+                                continue directly to authenticator verification.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-existing"
+                        onclick="openExistingSystemVerification()"
+                    >
+
+                        Already have registered
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn-secondary"
+                        onclick="resetForm()"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        onclick="registerSystem()"
+                        id="registerButton"
+                    >
+
+                        Register System
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
 
             </div>
 
-        </section>
 
-    </main>
+            <!-- =====================================================
+                 STEP 2
+            ====================================================== -->
+
+            <div class="form-step" id="step2">
+
+                <div class="step-heading">
+
+                    <span class="step-tag">
+                        02
+                    </span>
+
+                    <div>
+
+                        <h3 id="verificationTitle">
+                            Authenticator Verification
+                        </h3>
+
+                        <p id="verificationDescription">
+                            Connect this endpoint to an authenticator application
+                            before protection can be activated.
+                        </p>
+
+                    </div>
+
+                </div>
 
 
-    <footer>
-        <p>Ransomware Detection & Response System | Security Monitoring</p>
-    </footer>
+                <div
+                    class="existing-auth-card"
+                    id="existingAuthCard"
+                    style="display:none;"
+                >
+
+                    <div class="existing-auth-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                REGISTERED ENDPOINT
+                            </span>
+
+                            <h3>
+                                Verify Existing System
+                            </h3>
+
+                            <p>
+                                Enter the System ID of your registered endpoint.
+                            </p>
+
+                        </div>
+
+                        <div class="existing-auth-icon">
+                            🔐
+                        </div>
+
+                    </div>
 
 
-    <script src="/dashboard/dashboard.js"></script>
+                    <div class="existing-system-id-group">
+
+                        <label for="existingSystemId">
+                            System ID
+                        </label>
+
+                        <input
+                            type="text"
+                            id="existingSystemId"
+                            placeholder="Example: RSH-A1B2C3"
+                            autocomplete="off"
+                        >
+
+                        <small>
+                            Use the RansomShield System ID assigned during registration.
+                            <br><br><br>
+                        </small>
+
+                    </div>
+
+
+                    <div class="existing-auth-recovery">
+
+                        <div>
+
+                            <strong>
+                                Authenticator app unavailable?
+                            </strong>
+
+                            <p>
+                                Generate a new authenticator QR code for this registered system.
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="btn-primary"
+                            onclick="verifyAgain()"
+                            id="existingVerifyAgainButton"
+                        >
+                            Verify Again
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="verification-card">
+
+                    <div class="verification-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <span class="section-label">
+                            SYSTEM ID
+                        </span>
+
+                        <h3 id="systemId">
+                            RSH-XXXXXX
+                        </h3>
+
+                        <p>
+                            This endpoint has been registered and requires authentication.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="authenticator-setup">
+
+                    <div class="setup-header">
+
+                        <span class="section-label">
+                            AUTHENTICATOR SETUP
+                        </span>
+
+                        <h3>
+                            Connect Your Authenticator
+                        </h3>
+
+                        <p>
+                            Scan the QR code using Google Authenticator,
+                            Microsoft Authenticator, or another compatible
+                            TOTP application.
+                        </p>
+
+                    </div>
+
+
+                    <div class="setup-content">
+
+                        <div class="qr-container">
+
+                            <div class="qr-frame">
+
+                                <img
+                                    id="qrCode"
+                                    src=""
+                                    alt="RansomShield Authenticator QR Code"
+                                >
+
+                            </div>
+
+                            <span>
+                                Scan QR Code
+                            </span>
+
+                        </div>
+
+
+                        <div class="setup-details">
+
+                            <div class="setup-step">
+
+                                <div class="setup-number">
+                                    01
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Open your authenticator
+                                    </strong>
+
+                                    <p>
+                                        Open Google Authenticator,
+                                        Microsoft Authenticator, or another
+                                        TOTP-compatible application.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="setup-step">
+
+                                <div class="setup-number">
+                                    02
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Scan the QR code
+                                    </strong>
+
+                                    <p>
+                                        Add a new account and scan the
+                                        RansomShield QR code.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="setup-step">
+
+                                <div class="setup-number">
+                                    03
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Enter the generated code
+                                    </strong>
+
+                                    <p>
+                                        Your authenticator will generate a
+                                        rotating 6-digit verification code.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="manual-secret">
+
+                        <span>
+                            Manual setup key
+                        </span>
+
+                        <code id="authenticatorSecret">
+                            --
+                        </code>
+
+                    </div>
+
+
+                    <div class="verify-again-panel">
+
+                        <div>
+
+                            <strong>
+                                Authenticator app deleted or lost?
+                            </strong>
+
+                            <p>
+                                Generate a fresh QR code and reconnect your authenticator application.
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="btn-primary"
+                            onclick="verifyAgain()"
+                            id="verifyAgainButton"
+                        >
+                            Verify Again
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="authenticator-box">
+
+                    <div class="auth-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                AUTHENTICATOR
+                            </span>
+
+                            <h3>
+                                Verify Identity
+                            </h3>
+
+                            <p>
+                                Enter the current 6-digit code generated
+                                by your authenticator application.
+                            </p>
+
+                        </div>
+
+                        <div class="auth-shield">
+                            🔐
+                        </div>
+
+                    </div>
+
+
+                    <label>
+                        Authentication Code
+                    </label>
+
+
+                    <div class="code-inputs">
+
+                        <input maxlength="1" inputmode="numeric" class="code-input">
+                        <input maxlength="1" inputmode="numeric" class="code-input">
+                        <input maxlength="1" inputmode="numeric" class="code-input">
+                        <input maxlength="1" inputmode="numeric" class="code-input">
+                        <input maxlength="1" inputmode="numeric" class="code-input">
+                        <input maxlength="1" inputmode="numeric" class="code-input">
+
+                    </div>
+
+
+                    <div class="verification-help">
+                        The code changes automatically every 30 seconds.
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn-secondary"
+                        onclick="backToDetails()"
+                    >
+                        ← Back
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        onclick="verifySystem()"
+                        id="verifyButton"
+                    >
+
+                        Verify System
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 STEP 3
+            ====================================================== -->
+
+            <div class="form-step" id="step3">
+
+                <div class="step-heading">
+
+                    <span class="step-tag success">
+                        03
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            System Verified
+                        </h3>
+
+                        <p>
+                            This endpoint has successfully completed verification.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="verified-card">
+
+                    <div class="verified-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <span class="section-label">
+                            REGISTRATION COMPLETE
+                        </span>
+
+                        <h2>
+                            System Verified
+                        </h2>
+
+                        <p>
+                            The endpoint is authenticated and ready for
+                            RansomShield protection.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="system-summary">
+
+                    <div>
+
+                        <span>
+                            System ID
+                        </span>
+
+                        <strong id="summaryId">
+                            RSH-XXXXXX
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Hostname
+                        </span>
+
+                        <strong id="summaryHostname">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Operating System
+                        </span>
+
+                        <strong id="summaryOS">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Verification
+                        </span>
+
+                        <strong class="verified-text">
+                            VERIFIED
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Protection
+                        </span>
+
+                        <strong class="locked-text">
+                            READY
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ACTIVE PROTECTION
+                     Clicking this button activates protection
+                     and then opens the SOC dashboard.
+                ================================================== -->
+
+                <div class="protection-ready">
+
+                    <div class="ready-icon">
+                        🛡️
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Protection Ready
+                        </strong>
+
+                        <p>
+                            This system can now be connected to the RansomShield
+                            file and process monitoring engine.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        id="protectionButton"
+                        onclick="activateProtection();"
+                    >
+                        Activate Protection
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SIDE PANEL
+        ====================================================== -->
+
+        <aside class="side-panel">
+
+
+            <div class="side-card">
+
+                <div class="side-card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            ENROLLMENT STATUS
+                        </span>
+
+                        <h3>
+                            System Status
+                        </h3>
+
+                    </div>
+
+                    <span
+                        class="status-pill pending"
+                        id="statusPill"
+                    >
+                        NOT REGISTERED
+                    </span>
+
+                </div>
+
+
+                <div class="status-details">
+
+                    <div>
+
+                        <span>
+                            System Name
+                        </span>
+
+                        <strong id="sideSystemName">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Hostname
+                        </span>
+
+                        <strong id="sideHostname">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Operating System
+                        </span>
+
+                        <strong id="sideOS">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Verification
+                        </span>
+
+                        <strong id="sideVerification">
+                            Required
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Protection
+                        </span>
+
+                        <strong id="sideProtection">
+                            Locked
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="side-card">
+
+                <div class="side-card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            HOW IT WORKS
+                        </span>
+
+                        <h3>
+                            Enrollment Process
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="process-list">
+
+                    <div class="process-item">
+
+                        <div class="process-number">
+                            01
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Register System
+                            </strong>
+
+                            <span>
+                                Add the endpoint details to RansomShield.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="process-item">
+
+                        <div class="process-number">
+                            02
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Verify Identity
+                            </strong>
+
+                            <span>
+                                Authenticate the endpoint using a
+                                time-based verification code.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="process-item">
+
+                        <div class="process-number">
+                            03
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Start Protection
+                            </strong>
+
+                            <span>
+                                Activate file and process monitoring
+                                after verification.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="side-card protection-card">
+
+                <div class="protection-icon">
+                    🛡️
+                </div>
+
+                <div>
+
+                    <span class="section-label">
+                        RANSHIELD PROTECTION
+                    </span>
+
+                    <h3>
+                        Protected Enrollment
+                    </h3>
+
+                    <p>
+                        Only verified systems can activate ransomware monitoring.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </aside>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <strong>
+        RansomShield
+    </strong>
+
+    <span>
+        •
+    </span>
+
+    Ransomware Detection & Response System
+
+    <span>
+        •
+    </span>
+
+    v1.0
+
+</footer>
+
+
+<div id="toast" class="toast"></div>
+
+
+<!-- IMPORTANT:
+     dashboard.js contains activateProtection()
+     which activates the backend protection and redirects
+     to /dashboard/soc.html after success.
+-->
+
+<script src="/dashboard/dashboard.js?v=6"></script>
 
 </body>
 </html>

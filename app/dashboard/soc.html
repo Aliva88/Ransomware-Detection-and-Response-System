@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RansomShield | Security Dashboard</title>
+    <link rel="stylesheet" href="/dashboard/soc.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-mark">R</div>
+        <div>
+            <h1>RansomShield</h1>
+            <p>Ransomware Detection & Response Platform</p>
+        </div>
+    </div>
+
+    <div class="topbar-right">
+        <div class="api-status">
+            <span class="status-dot"></span>
+            API CONNECTED
+        </div>
+
+        <div class="admin-profile">
+            <div class="admin-avatar">A</div>
+            <div>
+                <strong>Security Admin</strong>
+                <span>Administrator</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            SECURITY OPERATIONS
+        </div>
+
+        <nav class="nav">
+
+            <a href="/" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span>System Enrollment</span>
+            </a>
+
+            <a href="/dashboard/" class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span>Security Dashboard</span>
+            </a>
+
+            <a href="/dashboard/incidents.html" class="nav-item">
+                <span class="nav-icon">❓</span>
+                <span>Incidents</span>
+                <span class="nav-badge" id="incidentNavBadge">0</span>
+            </a>
+
+            <a href="/dashboard/detection.html" class="nav-item">
+                <span class="nav-icon">📡</span>
+                <span>Detection Engine</span>
+            </a>
+
+            <a href="/dashboard/reports.html" class="nav-item">
+                <span class="nav-icon">📑</span>
+                <span>Reports</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="connection-card">
+                <div class="connection-header">
+                    <span class="status-dot"></span>
+                    SYSTEM CONNECTION
+                </div>
+
+                <strong id="sideSystemName">--</strong>
+                <span id="sideSystemId">--</span>
+
+                <div class="connection-state" id="sideProtection">
+                    PROTECTION ACTIVE
+                </div>
+            </div>
+
+            <div class="version">
+                RansomShield v1.0
+            </div>
+
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <div class="page-header">
+
+            <div>
+                <div class="eyebrow">
+                    SECURITY OPERATIONS CENTER
+                </div>
+
+                <h2>Security Dashboard</h2>
+
+                <p>
+                    Real-time ransomware detection, threat monitoring
+                    and endpoint protection overview.
+                </p>
+            </div>
+
+            <div class="header-actions">
+
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    LIVE MONITORING
+                </div>
+
+                <button class="refresh-btn" id="refreshButton">
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+        </div>
+
+        <section class="system-banner">
+
+            <div class="system-main">
+
+                <div class="system-shield">🛡️</div>
+
+                <div>
+                    <span class="section-label">PROTECTED ENDPOINT</span>
+                    <h3 id="systemName">Loading system...</h3>
+
+                    <div class="system-meta">
+                        <span>
+                            System ID:
+                            <strong id="systemId">--</strong>
+                        </span>
+
+                        <span>
+                            Host:
+                            <strong id="hostname">--</strong>
+                        </span>
+
+                        <span>
+                            OS:
+                            <strong id="operatingSystem">--</strong>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="protection-status">
+                <span class="status-dot"></span>
+                <div>
+                    <strong id="protectionStatus">
+                        PROTECTION ACTIVE
+                    </strong>
+                    <span>File & process monitoring enabled</span>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="metrics-grid">
+
+            <div class="metric-card threat-card">
+
+                <div class="metric-top">
+                    <span>THREAT SCORE</span>
+                    <span class="metric-icon">◉</span>
+                </div>
+
+                <div class="score-row">
+                    <strong id="threatScore">0</strong>
+                    <span>/ 100</span>
+                </div>
+
+                <div class="score-bar">
+                    <div id="scoreBar"></div>
+                </div>
+
+                <div class="metric-bottom">
+                    <span>Current risk assessment</span>
+                    <strong id="threatLevel">LOW</strong>
+                </div>
+
+            </div>
+
+            <div class="metric-card">
+
+                <div class="metric-top">
+                    <span>OPEN INCIDENTS</span>
+                    <span class="metric-icon warning">!</span>
+                </div>
+
+                <div class="metric-number" id="openIncidents">
+                    0
+                </div>
+
+                <div class="metric-bottom">
+                    <span>Active security incidents</span>
+                </div>
+
+            </div>
+
+            <div class="metric-card">
+
+                <div class="metric-top">
+                    <span>MONITORING</span>
+                    <span class="metric-icon">◉</span>
+                </div>
+
+                <div class="metric-number status-active" id="monitoringStatus">
+                    ACTIVE
+                </div>
+
+                <div class="metric-bottom">
+                    <span>Endpoint protection state</span>
+                </div>
+
+            </div>
+
+            <div class="metric-card">
+
+                <div class="metric-top">
+                    <span>SYSTEM HEALTH</span>
+                    <span class="metric-icon">✓</span>
+                </div>
+
+                <div class="metric-number status-active" id="systemHealth">
+                    ONLINE
+                </div>
+
+                <div class="metric-bottom">
+                    <span id="lastSeen">Last update: --</span>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="dashboard-grid">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <span class="section-label">
+                            DETECTION ENGINE
+                        </span>
+                        <h3>Current Detection Signals</h3>
+                    </div>
+
+                    <span class="panel-status">
+                        MONITORING
+                    </span>
+                </div>
+
+                <div class="signals">
+
+                    <div class="signal">
+                        <div>
+                            <strong>Rapid File Modification</strong>
+                            <span>Mass file modification activity</span>
+                        </div>
+                        <span class="signal-value" id="rapidEncryption">
+                            CLEAR
+                        </span>
+                    </div>
+
+                    <div class="signal">
+                        <div>
+                            <strong>Mass File Rename</strong>
+                            <span>Abnormal rename activity</span>
+                        </div>
+                        <span class="signal-value" id="massRename">
+                            CLEAR
+                        </span>
+                    </div>
+
+                    <div class="signal">
+                        <div>
+                            <strong>High Entropy Activity</strong>
+                            <span>Potential encrypted file content</span>
+                        </div>
+                        <span class="signal-value" id="highEntropy">
+                            CLEAR
+                        </span>
+                    </div>
+
+                    <div class="signal">
+                        <div>
+                            <strong>CPU / Disk Activity</strong>
+                            <span>Process behaviour correlation</span>
+                        </div>
+                        <span class="signal-value" id="cpuActivity">
+                            CLEAR
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <span class="section-label">
+                            ENDPOINT
+                        </span>
+                        <h3>System Information</h3>
+                    </div>
+                </div>
+
+                <div class="system-details">
+
+                    <div class="detail-row">
+                        <span>Hostname</span>
+                        <strong id="detailHostname">--</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>IP Address</span>
+                        <strong id="detailIp">--</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Operating System</span>
+                        <strong id="detailOs">--</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Environment</span>
+                        <strong id="detailEnvironment">Workstation</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Verification</span>
+                        <strong class="verified-text" id="detailVerification">
+                            VERIFIED
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="panel incidents-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <span class="section-label">
+                        INCIDENT RESPONSE
+                    </span>
+
+                    <h3>Recent Security Incidents</h3>
+                </div>
+
+                <a href="/dashboard/incidents.html" class="view-all">
+                    View all →
+                </a>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>TYPE</th>
+                            <th>SEVERITY</th>
+                            <th>STATUS</th>
+                            <th>DESCRIPTION</th>
+                            <th>TIMESTAMP</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="incidentTable">
+
+                        <tr>
+                            <td colspan="6" class="empty">
+                                Loading incidents...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        <footer class="footer">
+            <span>RansomShield Security Operations Center</span>
+            <span>Ransomware Detection & Response System • v1.0</span>
+        </footer>
+
+    </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/dashboard/soc.js"></script>
+
+</body>
+</html>

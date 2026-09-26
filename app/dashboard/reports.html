@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RansomShield | Reports</title>
+    <link rel="stylesheet" href="/dashboard/soc.css">
+
+    <style>
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .report-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 22px;
+        }
+
+        .report-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--blue-light);
+            color: var(--blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            margin-bottom: 15px;
+        }
+
+        .report-card h3 {
+            font-size: 15px;
+        }
+
+        .report-card p {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.6;
+            margin: 8px 0 17px;
+        }
+
+        .download-btn {
+            border: 0;
+            background: var(--blue);
+            color: white;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background: var(--blue-dark);
+        }
+
+        .report-info {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .report-info h3 {
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #edf1f5;
+            padding: 12px 0;
+            font-size: 10px;
+        }
+
+        .info-row:last-child {
+            border-bottom: 0;
+        }
+
+        .info-row span {
+            color: var(--muted);
+        }
+
+        .info-row strong {
+            text-align: right;
+        }
+
+        @media (max-width: 750px) {
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="brand">
+        <div class="brand-mark">R</div>
+
+        <div>
+            <h1>RansomShield</h1>
+            <p>Ransomware Detection & Response Platform</p>
+        </div>
+    </div>
+
+    <div class="topbar-right">
+
+        <div class="api-status">
+            <span class="status-dot"></span>
+            API CONNECTED
+        </div>
+
+        <div class="admin-profile">
+            <div class="admin-avatar">A</div>
+
+            <div>
+                <strong>Security Admin</strong>
+                <span>Administrator</span>
+            </div>
+        </div>
+
+    </div>
+
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            SECURITY OPERATIONS
+        </div>
+
+        <nav class="nav">
+
+            <a href="/" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span>System Enrollment</span>
+            </a>
+
+            <a href="/dashboard/soc.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Security Dashboard</span>
+            </a>
+
+            <a href="/dashboard/incidents.html" class="nav-item">
+                <span class="nav-icon">❓</span>
+                <span>Incidents</span>
+            </a>
+
+            <a href="/dashboard/detection.html" class="nav-item">
+                <span class="nav-icon">📡</span>
+                <span>Detection Engine</span>
+            </a>
+
+            <a href="/dashboard/reports.html" class="nav-item active">
+                <span class="nav-icon">📑</span>
+                <span>Reports</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="connection-card">
+
+                <div class="connection-header">
+                    <span class="status-dot"></span>
+                    SYSTEM CONNECTION
+                </div>
+
+                <strong id="sideSystemName">--</strong>
+
+                <span id="sideSystemId">--</span>
+
+                <div class="connection-state">
+                    PROTECTION ACTIVE
+                </div>
+
+            </div>
+
+            <div class="version">
+                RansomShield v1.0
+            </div>
+
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <div class="page-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    SECURITY OPERATIONS / REPORTING
+                </div>
+
+                <h2>Security Reports</h2>
+
+                <p>
+                    Export ransomware detection and incident response data.
+                </p>
+
+            </div>
+
+        </div>
+
+        <section class="report-grid">
+
+            <div class="report-card">
+
+                <div class="report-icon">
+                    📝
+                </div>
+
+                <div class="section-label">
+                    JSON REPORT
+                </div>
+
+                <h3>Security Data Report</h3>
+
+                <p>
+                    Export the complete RansomShield security
+                    dataset in JSON format for investigation,
+                    analysis and archival.
+                </p>
+
+                <button
+                    class="download-btn"
+                    id="jsonButton"
+                >
+                    ↓ Download JSON Report
+                </button>
+
+            </div>
+
+            <div class="report-card">
+
+                <div class="report-icon">
+                    📈
+                </div>
+
+                <div class="section-label">
+                    CSV REPORT
+                </div>
+
+                <h3>Incident & Event Report</h3>
+
+                <p>
+                    Export security events and incident information
+                    as a CSV file for spreadsheet-based analysis.
+                </p>
+
+                <button
+                    class="download-btn"
+                    id="csvButton"
+                >
+                    ↓ Download CSV Report
+                </button>
+
+            </div>
+
+        </section>
+
+        <section class="report-info">
+
+            <div class="section-label">
+                REPORTING SERVICE
+            </div>
+
+            <h3>Current Security System</h3>
+
+            <div class="info-row">
+                <span>System Name</span>
+                <strong id="systemName">--</strong>
+            </div>
+
+            <div class="info-row">
+                <span>System ID</span>
+                <strong id="systemId">--</strong>
+            </div>
+
+            <div class="info-row">
+                <span>Hostname</span>
+                <strong id="hostname">--</strong>
+            </div>
+
+            <div class="info-row">
+                <span>Operating System</span>
+                <strong id="operatingSystem">--</strong>
+            </div>
+
+            <div class="info-row">
+                <span>Protection</span>
+                <strong id="protection">
+                    ACTIVE
+                </strong>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/dashboard/reports.js"></script>
+
+</body>
+</html>

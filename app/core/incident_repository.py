@@ -28,3 +28,30 @@ def create_incident(
 
     finally:
         db.close()
+
+
+def get_open_incident(incident_type="Ransomware Activity"):
+    """
+    Return the latest open incident of the given type.
+
+    This is used to prevent duplicate incidents
+    during the same active ransomware event.
+    """
+
+    db = SessionLocal()
+
+    try:
+        incident = (
+            db.query(Incident)
+            .filter(
+                Incident.incident_type == incident_type,
+                Incident.status == "open"
+            )
+            .order_by(Incident.id.desc())
+            .first()
+        )
+
+        return incident
+
+    finally:
+        db.close()

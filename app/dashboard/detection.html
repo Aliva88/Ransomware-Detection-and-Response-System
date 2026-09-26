@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RansomShield | Detection Engine</title>
+    <link rel="stylesheet" href="/dashboard/soc.css">
+
+    <style>
+        .detection-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .engine-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 22px;
+        }
+
+        .engine-status {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 18px;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .engine-description {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+            margin-top: 15px;
+        }
+
+        .detection-signal {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 17px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .detection-signal strong {
+            display: block;
+            font-size: 11px;
+        }
+
+        .detection-signal p {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .signal-state {
+            padding: 6px 10px;
+            border-radius: 4px;
+            background: #e9f8f2;
+            color: var(--green);
+            font-size: 8px;
+            font-weight: 800;
+        }
+
+        .signal-state.detected {
+            background: #fff0f1;
+            color: var(--red);
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 25px;
+        }
+
+        .score-circle {
+            width: 145px;
+            height: 145px;
+            border-radius: 50%;
+            margin: 15px auto;
+            border: 12px solid #eaf3ff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .score-circle strong {
+            font-size: 38px;
+        }
+
+        .score-circle span {
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .level {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        .activity-box {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .activity-item {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 14px;
+        }
+
+        .activity-item span {
+            display: block;
+            color: var(--muted);
+            font-size: 8px;
+        }
+
+        .activity-item strong {
+            display: block;
+            margin-top: 7px;
+            font-size: 18px;
+        }
+
+        @media (max-width: 850px) {
+            .detection-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .activity-box {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-mark">R</div>
+        <div>
+            <h1>RansomShield</h1>
+            <p>Ransomware Detection & Response Platform</p>
+        </div>
+    </div>
+
+    <div class="topbar-right">
+        <div class="api-status">
+            <span class="status-dot"></span>
+            API CONNECTED
+        </div>
+
+        <div class="admin-profile">
+            <div class="admin-avatar">A</div>
+            <div>
+                <strong>Security Admin</strong>
+                <span>Administrator</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            SECURITY OPERATIONS
+        </div>
+
+        <nav class="nav">
+
+            <a href="/" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span>System Enrollment</span>
+            </a>
+
+            <a href="/dashboard/soc.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Security Dashboard</span>
+            </a>
+
+            <a href="/dashboard/incidents.html" class="nav-item">
+                <span class="nav-icon">❓</span>
+                <span>Incidents</span>
+            </a>
+
+            <a href="/dashboard/detection.html" class="nav-item active">
+                <span class="nav-icon">📡</span>
+                <span>Detection Engine</span>
+            </a>
+
+            <a href="/dashboard/reports.html" class="nav-item">
+                <span class="nav-icon">📑</span>
+                <span>Reports</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="connection-card">
+                <div class="connection-header">
+                    <span class="status-dot"></span>
+                    SYSTEM CONNECTION
+                </div>
+
+                <strong id="sideSystemName">--</strong>
+                <span id="sideSystemId">--</span>
+
+                <div class="connection-state">
+                    PROTECTION ACTIVE
+                </div>
+            </div>
+
+            <div class="version">
+                RansomShield v1.0
+            </div>
+
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <div class="page-header">
+
+            <div>
+                <div class="eyebrow">
+                    SECURITY OPERATIONS / DETECTION
+                </div>
+
+                <h2>Detection Engine</h2>
+
+                <p>
+                    Behavioral analysis and ransomware threat detection signals.
+                </p>
+            </div>
+
+            <div class="header-actions">
+
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    ENGINE ACTIVE
+                </div>
+
+                <button class="refresh-btn" id="refreshButton">
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+        </div>
+
+        <section class="detection-grid">
+
+            <div class="engine-card">
+
+                <div class="section-label">
+                    BEHAVIORAL DETECTION
+                </div>
+
+                <h3 style="margin-top:7px;font-size:17px;">
+                    Ransomware Detection Engine
+                </h3>
+
+                <div class="engine-status">
+                    <span class="status-dot"></span>
+                    DETECTION ENGINE OPERATIONAL
+                </div>
+
+                <p class="engine-description">
+                    RansomShield continuously evaluates file-system
+                    and process behavior to identify activity associated
+                    with ransomware execution.
+                </p>
+
+                <div class="activity-box">
+
+                    <div class="activity-item">
+                        <span>FILE MODIFICATIONS</span>
+                        <strong id="modifiedCount">0</strong>
+                    </div>
+
+                    <div class="activity-item">
+                        <span>FILE RENAMES</span>
+                        <strong id="renameCount">0</strong>
+                    </div>
+
+                    <div class="activity-item">
+                        <span>EXTENSION CHANGES</span>
+                        <strong id="extensionCount">0</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="engine-card score-display">
+
+                <div class="section-label">
+                    THREAT ANALYSIS
+                </div>
+
+                <div class="score-circle">
+                    <strong id="threatScore">0</strong>
+                    <span>/ 100</span>
+                </div>
+
+                <div>
+                    THREAT LEVEL
+                </div>
+
+                <div class="level" id="threatLevel">
+                    LOW
+                </div>
+
+            </div>
+
+        </section>
+
+        <div class="section-label" style="margin:5px 0 12px;">
+            ACTIVE DETECTION SIGNALS
+        </div>
+
+        <section>
+
+            <div class="detection-signal">
+                <div>
+                    <strong>Rapid File Encryption / Modification</strong>
+                    <p>
+                        Detects unusually high file modification activity
+                        inside the monitoring window.
+                    </p>
+                </div>
+
+                <span class="signal-state" id="rapidEncryption">
+                    CLEAR
+                </span>
+            </div>
+
+            <div class="detection-signal">
+                <div>
+                    <strong>Mass File Rename</strong>
+                    <p>
+                        Detects large-scale file rename behavior commonly
+                        associated with ransomware.
+                    </p>
+                </div>
+
+                <span class="signal-state" id="massRename">
+                    CLEAR
+                </span>
+            </div>
+
+            <div class="detection-signal">
+                <div>
+                    <strong>Multiple Extension Changes</strong>
+                    <p>
+                        Identifies abnormal changes to file extensions.
+                    </p>
+                </div>
+
+                <span class="signal-state" id="extensionChange">
+                    CLEAR
+                </span>
+            </div>
+
+            <div class="detection-signal">
+                <div>
+                    <strong>High Entropy Activity</strong>
+                    <p>
+                        Indicates potential encrypted file content.
+                    </p>
+                </div>
+
+                <span class="signal-state" id="highEntropy">
+                    CLEAR
+                </span>
+            </div>
+
+            <div class="detection-signal">
+                <div>
+                    <strong>Process CPU / Disk Activity</strong>
+                    <p>
+                        Correlates process activity with suspicious
+                        file-system behavior.
+                    </p>
+                </div>
+
+                <span class="signal-state" id="cpuActivity">
+                    CLEAR
+                </span>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/dashboard/detection.js"></script>
+
+</body>
+</html>

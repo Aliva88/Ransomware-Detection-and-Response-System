@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RansomShield | Incidents</title>
+    <link rel="stylesheet" href="/dashboard/soc.css">
+    <style>
+        .incident-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-box {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-box span {
+            display: block;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .8px;
+        }
+
+        .summary-box strong {
+            display: block;
+            font-size: 27px;
+            margin-top: 10px;
+        }
+
+        .filter-bar {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 13px 17px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-bar select {
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 10px;
+            background: white;
+        }
+
+        .danger-number {
+            color: var(--red);
+        }
+
+        .medium-number {
+            color: var(--orange);
+        }
+
+        @media (max-width: 700px) {
+            .incident-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-mark">R</div>
+        <div>
+            <h1>RansomShield</h1>
+            <p>Ransomware Detection & Response Platform</p>
+        </div>
+    </div>
+
+    <div class="topbar-right">
+        <div class="api-status">
+            <span class="status-dot"></span>
+            API CONNECTED
+        </div>
+
+        <div class="admin-profile">
+            <div class="admin-avatar">A</div>
+            <div>
+                <strong>Security Admin</strong>
+                <span>Administrator</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            SECURITY OPERATIONS
+        </div>
+
+        <nav class="nav">
+
+            <a href="/" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span>System Enrollment</span>
+            </a>
+
+            <a href="/dashboard/soc.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Security Dashboard</span>
+            </a>
+
+            <a href="/dashboard/incidents.html" class="nav-item active">
+                <span class="nav-icon">❓</span>
+                <span>Incidents</span>
+                <span class="nav-badge" id="incidentBadge">0</span>
+            </a>
+
+            <a href="/dashboard/detection.html" class="nav-item">
+                <span class="nav-icon">📡</span>
+                <span>Detection Engine</span>
+            </a>
+
+            <a href="/dashboard/reports.html" class="nav-item">
+                <span class="nav-icon">📑</span>
+                <span>Reports</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="connection-card">
+                <div class="connection-header">
+                    <span class="status-dot"></span>
+                    SYSTEM CONNECTION
+                </div>
+
+                <strong id="sideSystemName">--</strong>
+                <span id="sideSystemId">--</span>
+
+                <div class="connection-state">
+                    PROTECTION ACTIVE
+                </div>
+            </div>
+
+            <div class="version">
+                RansomShield v1.0
+            </div>
+
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <div class="page-header">
+
+            <div>
+                <div class="eyebrow">
+                    SECURITY OPERATIONS / INCIDENT RESPONSE
+                </div>
+
+                <h2>Security Incidents</h2>
+
+                <p>
+                    Monitor, investigate and track detected security incidents.
+                </p>
+            </div>
+
+            <div class="header-actions">
+
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    LIVE MONITORING
+                </div>
+
+                <button class="refresh-btn" id="refreshButton">
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+        </div>
+
+        <section class="incident-summary">
+
+            <div class="summary-box">
+                <span>TOTAL INCIDENTS</span>
+                <strong id="totalIncidents">0</strong>
+            </div>
+
+            <div class="summary-box">
+                <span>OPEN INCIDENTS</span>
+                <strong class="danger-number" id="openIncidents">0</strong>
+            </div>
+
+            <div class="summary-box">
+                <span>HIGH / CRITICAL</span>
+                <strong class="medium-number" id="highIncidents">0</strong>
+            </div>
+
+        </section>
+
+        <div class="filter-bar">
+
+            <div>
+                <strong style="font-size:11px;">
+                    INCIDENT LOG
+                </strong>
+
+                <span style="font-size:9px;color:var(--muted);margin-left:8px;">
+                    Real-time security events
+                </span>
+            </div>
+
+            <select id="severityFilter">
+                <option value="all">All Severities</option>
+                <option value="critical">Critical</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+
+        </div>
+
+        <section class="panel">
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>TYPE</th>
+                            <th>SEVERITY</th>
+                            <th>STATUS</th>
+                            <th>THREAT SCORE</th>
+                            <th>DESCRIPTION</th>
+                            <th>TIMESTAMP</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="incidentTable">
+
+                        <tr>
+                            <td colspan="7" class="empty">
+                                Loading incidents...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/dashboard/incidents.js"></script>
+
+</body>
+</html>
