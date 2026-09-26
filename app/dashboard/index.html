@@ -63,9 +63,9 @@
 
 <nav class="navigation">
 
-    <div class="nav-title">
+    <!--<div class="nav-title">
         SECURITY OPERATIONS
-    </div>
+    </div>-->
 
     <div class="nav-links">
 
@@ -74,7 +74,7 @@
             System Enrollment
         </a>
 
-        <!-- SOC DASHBOARD -->
+        <!-- SOC DASHBOARD 
         <a href="/dashboard/soc.html" class="nav-link">
             <span>📊</span>
             Security Dashboard
@@ -93,7 +93,7 @@
         <a href="/dashboard/reports.html" class="nav-link">
             <span>📑</span>
             Reports
-        </a>
+        </a>-->
 
     </div>
 
@@ -1027,14 +1027,22 @@
                     </div>
 
 
-                    <button
+                    <a href="/dashboard/soc.html" class="nav-link"><button
                         type="button"
                         class="btn-primary"
                         id="protectionButton"
                         onclick="activateProtection();"
                     >
                         Activate Protection
-                    </button>
+                    </button></a>
+                    <!--<button
+                        type="button"
+                        class="btn-primary"
+                        id="protectionButton"
+                        onclick="activateProtection();"
+                    >
+                        Activate Protection
+                    </button>-->
 
                 </div>
 
