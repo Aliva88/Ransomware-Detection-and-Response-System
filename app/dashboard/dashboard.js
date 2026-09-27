@@ -652,9 +652,14 @@ async function registerSystem() {
             );
         }
 
+        /*
+         * FIX: backend (app/api/routes.py -> create_system)
+         * returns "status": "created" on success, not "registered".
+         * This mismatch was the reason the flow never moved to Step 2.
+         */
         if (
             data.status ===
-            "registered"
+            "created"
         ) {
             displaySystemInformation(
                 data.system
@@ -1255,9 +1260,15 @@ async function activateProtection() {
             );
         }
 
+        /*
+         * FIX: backend (app/api/routes.py -> set_system_protection)
+         * returns "status": "active" on success, not "activated".
+         * This mismatch was the reason the button never redirected
+         * to soc.html.
+         */
         if (
             data.status !==
-            "activated"
+            "active"
         ) {
             throw new Error(
                 data.message ||
