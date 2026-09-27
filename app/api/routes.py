@@ -586,7 +586,7 @@ def set_system_protection(
                 monitor_folder = folders[0]
 
                 monitor_observer = start_monitor(
-                    monitor_folder
+                    monitor_folder,system_id=system.id
                 )
 
             system.monitoring = True
@@ -688,7 +688,7 @@ def start_protection():
             monitor_folder = folders[0]
 
             monitor_observer = start_monitor(
-                monitor_folder
+                monitor_folder,system_id=system.id
             )
 
         system.monitoring = True

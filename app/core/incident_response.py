@@ -6,7 +6,8 @@ from app.core.incident_repository import (
 
 class IncidentResponse:
 
-    def __init__(self, critical_threshold=80):
+    def __init__(self, system_id, critical_threshold=80):
+        self.system_id = system_id
         self.critical_threshold = critical_threshold
 
     def handle_detection(
@@ -59,7 +60,8 @@ class IncidentResponse:
         incident = create_incident(
             incident_type="Ransomware Activity",
             severity=threat_level,
-            description=description
+            description=description,
+            system_id=self.system_id
         )
 
         return incident

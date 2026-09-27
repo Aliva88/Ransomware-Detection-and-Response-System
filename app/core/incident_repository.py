@@ -5,7 +5,8 @@ from app.models import Incident
 def create_incident(
     incident_type,
     severity,
-    description
+    description,
+    system_id
 ):
     """
     Create and save a new security incident.
@@ -17,7 +18,8 @@ def create_incident(
         incident = Incident(
             incident_type=incident_type,
             severity=severity,
-            description=description
+            description=description,
+            system_id=system_id
         )
 
         db.add(incident)

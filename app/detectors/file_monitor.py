@@ -19,13 +19,15 @@ class RDRSEventHandler(FileSystemEventHandler):
         self,
         detection_engine,
         threat_scorer,
-        incident_response
+        incident_response,
+        system_id
     ):
         super().__init__()
 
         self.detection_engine = detection_engine
         self.threat_scorer = threat_scorer
         self.incident_response = incident_response
+        self.system_id = system_id
 
         self.last_incident_score = 0
 
@@ -116,7 +118,8 @@ class RDRSEventHandler(FileSystemEventHandler):
 
             save_score(
                 score=threat_result["score"],
-                level=threat_result["threat_level"]
+                level=threat_result["threat_level"],
+                system_id=self.system_id
             )
 
             logger.info(
@@ -198,7 +201,7 @@ class RDRSEventHandler(FileSystemEventHandler):
             )
 
 
-def start_monitor(folder):
+def start_monitor(folder, system_id):
 
     folder_path = Path(folder)
 
@@ -259,6 +262,7 @@ def start_monitor(folder):
     # -----------------------------------------
 
     incident_response = IncidentResponse(
+        system_id=system_id,
         critical_threshold=80
     )
 
@@ -271,7 +275,8 @@ def start_monitor(folder):
     handler = RDRSEventHandler(
         detection_engine=detection_engine,
         threat_scorer=threat_scorer,
-        incident_response=incident_response
+        incident_response=incident_response,
+        system_id=system_id
     )
 
     observer.schedule(

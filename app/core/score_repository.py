@@ -2,7 +2,7 @@ from app.database import SessionLocal
 from app.models import Score
 
 
-def save_score(score, level):
+def save_score(score, level, system_id):
     """
     Save a threat score and threat level
     into the scores table.
@@ -13,7 +13,8 @@ def save_score(score, level):
     try:
         score_record = Score(
             score=score,
-            level=level
+            level=level,
+            system_id=system_id
         )
 
         db.add(score_record)
