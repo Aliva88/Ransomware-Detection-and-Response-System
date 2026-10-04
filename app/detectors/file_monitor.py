@@ -6,11 +6,59 @@ from watchdog.observers import Observer
 
 from app.core.logging import logger
 from app.core.config_loader import load_config
+from app.core.entropy import calculate_entropy
 from app.core.threat_scorer import ThreatScorer
 from app.core.score_repository import save_score
 from app.core.incident_response import IncidentResponse
 from app.detectors.detection_engine import DetectionEngine
 from app.process_monitor import get_process_signals
+
+
+# ------------------------------------------------------------
+# Entropy settings
+# ------------------------------------------------------------
+
+# Entropy of very small files is naturally low, even when they
+# are random, so tiny files are skipped.
+MIN_ENTROPY_FILE_SIZE = 1024
+
+# These formats are ALREADY compressed, so their content always
+# looks random. Measuring them would cause false alarms.
+SKIP_ENTROPY_EXTENSIONS = {
+    ".zip", ".rar", ".7z", ".gz", ".bz2", ".xz", ".tgz", ".cab",
+    ".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic",
+    ".mp3", ".mp4", ".mkv", ".avi", ".mov", ".flac", ".aac",
+    ".ogg", ".webm",
+    ".pdf", ".docx", ".xlsx", ".pptx", ".odt", ".ods",
+    ".jar", ".apk", ".iso", ".msi", ".exe", ".dll",
+}
+
+
+def measure_entropy(file_path, event_type):
+    """
+    Return the entropy (0-8) of a file's content, or None when it
+    should not be measured (deleted, folder, tiny, already
+    compressed, or not readable).
+    """
+
+    if event_type == "DELETE":
+        return None
+
+    try:
+        if file_path.suffix.lower() in SKIP_ENTROPY_EXTENSIONS:
+            return None
+
+        if not file_path.is_file():
+            return None
+
+        if file_path.stat().st_size < MIN_ENTROPY_FILE_SIZE:
+            return None
+
+        return round(calculate_entropy(str(file_path)), 3)
+
+    except (OSError, PermissionError):
+        # File was moved/locked while we were looking at it.
+        return None
 
 
 class RDRSEventHandler(FileSystemEventHandler):
@@ -58,6 +106,14 @@ class RDRSEventHandler(FileSystemEventHandler):
             event_data["old_extension"] = (
                 old_file_path.suffix.lower()
             )
+
+        entropy = measure_entropy(
+            file_path,
+            event_type
+        )
+
+        if entropy is not None:
+            event_data["entropy"] = entropy
 
         logger.info(
             f"File event: {event_data}"
@@ -246,7 +302,17 @@ def start_monitor(folder, system_id):
 
         extension_change_threshold=detection_config[
             "extension_change_threshold"
-        ]
+        ],
+
+        entropy_threshold=detection_config.get(
+            "entropy_threshold",
+            7.5
+        ),
+
+        high_entropy_files_threshold=detection_config.get(
+            "high_entropy_files_threshold",
+            5
+        )
     )
 
     # -----------------------------------------

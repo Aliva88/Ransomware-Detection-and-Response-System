@@ -81,10 +81,33 @@ function updateDetection(data) {
         }
     }
 
-    setText(
+    /*setText(
         "threatScore",
         Math.round(score)
-    );
+    );*/
+    const roundedScore = Math.max(
+    0,
+    Math.min(100, Math.round(score))
+);
+
+setText(
+    "threatScore",
+    roundedScore
+);
+
+const scoreCircle = document.querySelector(".score-circle");
+
+if (scoreCircle) {
+    const degrees = roundedScore * 3.6;
+
+    scoreCircle.style.background =
+        `conic-gradient(
+            #1769e0 0deg,
+            #1769e0 ${degrees}deg,
+            #eaf3ff ${degrees}deg,
+            #eaf3ff 360deg
+        )`;
+}
 
     setText(
         "threatLevel",

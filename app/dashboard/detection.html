@@ -80,7 +80,7 @@
             padding: 25px;
         }
 
-        .score-circle {
+        /*.score-circle {
             width: 145px;
             height: 145px;
             border-radius: 50%;
@@ -99,7 +99,46 @@
         .score-circle span {
             color: var(--muted);
             font-size: 9px;
-        }
+        }*/
+        .score-circle {
+    width: 145px;
+    height: 145px;
+    border-radius: 50%;
+    margin: 15px auto;
+    background: conic-gradient(
+        #1769e0 0deg,
+        #1769e0 162deg,
+        #eaf3ff 162deg,
+        #eaf3ff 360deg
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.score-circle::before {
+    content: "";
+    position: absolute;
+    width: 121px;
+    height: 121px;
+    border-radius: 50%;
+    background: white;
+}
+
+.score-circle strong {
+    position: relative;
+    z-index: 2;
+    font-size: 38px;
+}
+
+.score-circle span {
+    position: relative;
+    z-index: 2;
+    color: var(--muted);
+    font-size: 9px;
+}
 
         .level {
             font-size: 10px;
@@ -182,10 +221,10 @@
 
         <nav class="nav">
 
-            <a href="/" class="nav-item">
+            <!--<a href="/" class="nav-item">
                 <span class="nav-icon">👤</span>
                 <span>Add New System</span>
-            </a>
+            </a>-->
 
             <a href="/dashboard/soc.html" class="nav-item">
                 <span class="nav-icon">📊</span>

@@ -1,8 +1,41 @@
+import os
+import time
+import threading
+
 import psutil
 from datetime import datetime, timezone
 
 from app.database import SessionLocal
 from app.models import Process
+
+
+# ------------------------------------------------------------
+# Settings for live process signals
+# ------------------------------------------------------------
+
+# Re-use the last snapshot for this many seconds.
+# Scanning every process is slow (~2 seconds on Windows),
+# so doing it on every single file event blocks the file monitor.
+SIGNAL_CACHE_SECONDS = 5
+
+# A single process using at least this much CPU counts as a spike.
+CPU_SPIKE_PERCENT = 70
+
+# Bytes written by ALL processes since the previous snapshot
+# that count as a disk-write spike.
+DISK_WRITE_SPIKE_BYTES = 10 * 1024 * 1024
+
+# Processes that must never be counted.
+# "System Idle Process" (pid 0) reports idle time as CPU usage
+# on Windows, which looks like 800-1000% CPU on an idle laptop.
+# Our own process is ignored so RDRS does not detect itself.
+IGNORED_PIDS = {0, os.getpid()}
+IGNORED_NAMES = {"system idle process"}
+
+_lock = threading.Lock()
+_previous_writes = {}
+_last_snapshot_time = 0.0
+_cached_signals = None
 
 
 def collect_processes():
@@ -66,78 +99,118 @@ def collect_processes():
 
 def get_process_signals():
     """
-    Collect current system process activity and convert it
-    into ransomware-relevant behavioral signals.
+    Convert current process activity into ransomware-relevant signals.
 
-    This does NOT treat normal CPU usage as ransomware.
-    CPU becomes suspicious only when combined with
-    significant process disk-write activity.
+    Fixes compared to the old version:
+      - The idle process and RDRS itself are ignored.
+      - Disk writes are measured as bytes written SINCE THE LAST
+        SNAPSHOT (a delta). Before, lifetime totals were used, so
+        the spike was always True.
+      - Results are cached for a few seconds so file events are
+        not slowed down by a full process scan every time.
+
+    CPU alone is never treated as ransomware. It only counts
+    when combined with a real burst of disk writes.
     """
 
-    max_cpu = 0.0
-    total_disk_write = 0
-    high_cpu_processes = 0
+    global _previous_writes, _last_snapshot_time, _cached_signals
 
-    try:
-        for process in psutil.process_iter(
-            [
-                "pid",
-                "name",
-                "cpu_percent",
-                "memory_percent"
-            ]
+    with _lock:
+        now = time.monotonic()
+
+        if (
+            _cached_signals is not None
+            and (now - _last_snapshot_time) < SIGNAL_CACHE_SECONDS
         ):
-            try:
-                info = process.info
+            return dict(_cached_signals)
 
-                cpu = float(info.get("cpu_percent") or 0)
+        max_cpu = 0.0
+        high_cpu_processes = 0
+        total_disk_write = 0
+        disk_written_since_last = 0
+        current_writes = {}
 
+        try:
+            for process in psutil.process_iter(
+                [
+                    "pid",
+                    "name",
+                    "cpu_percent"
+                ]
+            ):
                 try:
-                    io_counters = process.io_counters()
-                    disk_write = int(
-                        io_counters.write_bytes or 0
-                    )
+                    info = process.info
+
+                    pid = info["pid"]
+                    name = (info.get("name") or "").lower()
+
+                    if pid in IGNORED_PIDS or name in IGNORED_NAMES:
+                        continue
+
+                    cpu = float(info.get("cpu_percent") or 0)
+
+                    max_cpu = max(max_cpu, cpu)
+
+                    if cpu >= CPU_SPIKE_PERCENT:
+                        high_cpu_processes += 1
+
+                    try:
+                        write_bytes = int(
+                            process.io_counters().write_bytes or 0
+                        )
+                    except (
+                        psutil.NoSuchProcess,
+                        psutil.AccessDenied,
+                        psutil.ZombieProcess
+                    ):
+                        continue
+
+                    total_disk_write += write_bytes
+                    current_writes[pid] = write_bytes
+
+                    previous = _previous_writes.get(pid)
+
+                    if previous is not None and write_bytes >= previous:
+                        disk_written_since_last += (
+                            write_bytes - previous
+                        )
+
                 except (
                     psutil.NoSuchProcess,
                     psutil.AccessDenied,
                     psutil.ZombieProcess
                 ):
-                    disk_write = 0
+                    continue
 
-                max_cpu = max(max_cpu, cpu)
-                total_disk_write += disk_write
+        except Exception as error:
+            print("Process signal collection error:", error)
 
-                if cpu >= 70:
-                    high_cpu_processes += 1
+        _previous_writes = current_writes
 
-            except (
-                psutil.NoSuchProcess,
-                psutil.AccessDenied,
-                psutil.ZombieProcess
-            ):
-                continue
+        cpu_spike = max_cpu >= CPU_SPIKE_PERCENT
 
-    except Exception as error:
-        print("Process signal collection error:", error)
+        disk_write_spike = (
+            disk_written_since_last >= DISK_WRITE_SPIKE_BYTES
+        )
 
-    cpu_spike = max_cpu >= 70
+        combined_process_activity = (
+            cpu_spike and disk_write_spike
+        )
 
-    disk_write_spike = (
-        total_disk_write >= 10 * 1024 * 1024
-    )
+        signals = {
+            "max_cpu": round(max_cpu, 2),
+            "total_disk_write_bytes": total_disk_write,
+            "disk_written_since_last_check_bytes": disk_written_since_last,
+            "high_cpu_processes": high_cpu_processes,
+            "cpu_spike": cpu_spike,
+            "disk_write_spike": disk_write_spike,
+            "combined_process_activity": combined_process_activity
+        }
 
-    combined_process_activity = (
-        cpu_spike and disk_write_spike
-    )
+        _cached_signals = signals
+        _last_snapshot_time = now
 
-    return {
-        "max_cpu": round(max_cpu, 2),
-        "total_disk_write_bytes": total_disk_write,
-        "high_cpu_processes": high_cpu_processes,
-        "cpu_spike": cpu_spike,
-        "disk_write_spike": disk_write_spike,
-        "combined_process_activity": combined_process_activity
-    }
+        return dict(signals)
 
 
 if __name__ == "__main__":

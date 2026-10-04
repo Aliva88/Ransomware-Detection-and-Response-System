@@ -9,12 +9,23 @@ class DetectionEngine:
         window_seconds=60,
         modified_files_threshold=20,
         rename_threshold=10,
-        extension_change_threshold=5
+        extension_change_threshold=5,
+        entropy_threshold=7.5,
+        high_entropy_files_threshold=5
     ):
         self.window_seconds = window_seconds
         self.modified_files_threshold = modified_files_threshold
         self.rename_threshold = rename_threshold
         self.extension_change_threshold = extension_change_threshold
+
+        # A file counts as "random-looking" (possibly encrypted)
+        # when its entropy is at or above this value (max is 8).
+        self.entropy_threshold = entropy_threshold
+
+        # How many DIFFERENT files must look random inside the
+        # sliding window before it is treated as a threat.
+        # One zip or photo alone will never trigger this.
+        self.high_entropy_files_threshold = high_entropy_files_threshold
 
         self.events = deque()
 
@@ -66,6 +77,12 @@ class DetectionEngine:
 
         extension_changes = self._count_extension_changes()
 
+        high_entropy_count = self._count_high_entropy_files()
+
+        high_entropy = (
+            high_entropy_count >= self.high_entropy_files_threshold
+        )
+
         suspicious_reasons = []
 
         if modified_count >= self.modified_files_threshold:
@@ -83,13 +100,45 @@ class DetectionEngine:
                 "Multiple extension changes detected"
             )
 
+        if high_entropy:
+            suspicious_reasons.append(
+                "High-entropy file content detected "
+                "(possible encryption)"
+            )
+
         return {
             "suspicious": len(suspicious_reasons) > 0,
             "modified_count": modified_count,
             "rename_count": rename_count,
             "extension_changes": extension_changes,
+            "high_entropy": high_entropy,
+            "high_entropy_count": high_entropy_count,
             "reasons": suspicious_reasons
         }
+
+    def _count_high_entropy_files(self):
+        """
+        Count DIFFERENT files whose content looks random.
+
+        A file that changes many times is counted once,
+        using its most recent entropy value in the window.
+        """
+
+        latest_entropy = {}
+
+        for event in self.events:
+            entropy = event.get("entropy")
+
+            if entropy is None:
+                continue
+
+            latest_entropy[event["path"]] = entropy
+
+        return sum(
+            1
+            for value in latest_entropy.values()
+            if value >= self.entropy_threshold
+        )
 
     def _count_extension_changes(self):
         """
