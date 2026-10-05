@@ -6,7 +6,9 @@ def create_incident(
     incident_type,
     severity,
     description,
-    system_id
+    system_id,
+    threat_score=None,
+    signals=None
 ):
     """
     Create and save a new security incident.
@@ -19,7 +21,9 @@ def create_incident(
             incident_type=incident_type,
             severity=severity,
             description=description,
-            system_id=system_id
+            system_id=system_id,
+            threat_score=threat_score,
+            signals=signals
         )
 
         db.add(incident)

@@ -59,10 +59,12 @@ class IncidentResponse:
         )
 
         incident = create_incident(
-            incident_type="Ransomware Activity",
-            severity=threat_level,
-            description=description,
-            system_id=self.system_id
-        )
+    incident_type="Ransomware Activity",
+    severity=threat_level,
+    description=description,
+    system_id=self.system_id,
+    threat_score=score,
+    signals=str(threat_result.get("behaviors", {}))
+)
 
         return incident
