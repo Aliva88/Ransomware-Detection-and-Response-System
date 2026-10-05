@@ -37,3 +37,5 @@ app/test_extension_detection.py
 app/test_integration.py
 app/test_rename_event.py
 app/test_sliding_window.py
+_backup/
+day1_backup/

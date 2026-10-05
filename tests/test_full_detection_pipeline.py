@@ -6,6 +6,9 @@ from app.core.threat_scorer import ThreatScorer
 from app.core.score_repository import save_score
 
 
+TEST_SYSTEM_ID = "TEST-SYSTEM-001"
+
+
 def test_full_detection_pipeline():
 
     # Load configuration
@@ -43,6 +46,7 @@ def test_full_detection_pipeline():
 
     # Step 3: Save score to database
     score_record = save_score(
+        system_id=TEST_SYSTEM_ID,
         score=threat_result["score"],
         level=threat_result["threat_level"]
     )
@@ -66,3 +70,4 @@ def test_full_detection_pipeline():
     assert score_record.id is not None
     assert score_record.score == 70
     assert score_record.level == "High"
+    assert score_record.system_id == TEST_SYSTEM_ID

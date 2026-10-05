@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>RansomShield | Attack Replay</title>
+
+    <link
+        rel="stylesheet"
+        href="/dashboard/attack-replay.css"
+    >
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-mark">
+            R
+        </div>
+
+        <div>
+            <h1>RansomShield</h1>
+
+            <p>
+                Ransomware Detection & Response Platform
+            </p>
+        </div>
+
+    </div>
+
+    <div class="topbar-right">
+
+        <div class="api-status">
+
+            <span class="status-dot"></span>
+
+            API CONNECTED
+
+        </div>
+
+        <div class="admin-profile">
+
+            <div class="admin-avatar">
+                A
+            </div>
+
+            <div>
+
+                <strong>
+                    Security Admin
+                </strong>
+
+                <span>
+                    Administrator
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            SECURITY OPERATIONS
+        </div>
+
+        <nav class="nav">
+
+            <a
+                href="/dashboard/soc.html"
+                class="nav-item"
+            >
+                <span class="nav-icon">
+                    📊
+                </span>
+
+                <span>
+                    Security Dashboard
+                </span>
+            </a>
+
+
+            <a
+                href="/dashboard/incidents.html"
+                class="nav-item"
+            >
+                <span class="nav-icon">
+                    ❗
+                </span>
+
+                <span>
+                    Incidents
+                </span>
+            </a>
+
+
+            <a
+                href="/dashboard/detection.html"
+                class="nav-item"
+            >
+                <span class="nav-icon">
+                    📡
+                </span>
+
+                <span>
+                    Detection Engine
+                </span>
+            </a>
+
+
+            <a
+                href="/dashboard/reports.html"
+                class="nav-item"
+            >
+                <span class="nav-icon">
+                    📑
+                </span>
+
+                <span>
+                    Reports
+                </span>
+            </a>
+
+
+            <a
+                href="/dashboard/attack-replay.html"
+                class="nav-item active"
+            >
+                <span class="nav-icon">
+                    ▶
+                </span>
+
+                <span>
+                    Attack Replay
+                </span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="connection-card">
+
+                <div class="connection-header">
+
+                    <span class="status-dot"></span>
+
+                    SYSTEM CONNECTION
+
+                </div>
+
+                <strong id="sideSystemName">
+                    --
+                </strong>
+
+                <span id="sideSystemId">
+                    --
+                </span>
+
+                <div
+                    class="connection-state"
+                    id="sideProtection"
+                >
+                    PROTECTION ACTIVE
+                </div>
+
+            </div>
+
+
+            <div class="version">
+                RansomShield v1.0
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <main class="main">
+
+        <div class="page-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    SECURITY OPERATIONS CENTER
+                </div>
+
+                <h2>
+                    Attack Replay
+                </h2>
+
+                <p>
+                    Reconstruct filesystem activity
+                    from recorded endpoint events.
+                </p>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <div class="live-indicator">
+
+                    <span class="live-dot"></span>
+
+                    EVENT REPLAY
+
+                </div>
+
+                <button
+                    class="refresh-btn"
+                    id="refreshButton"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- SYSTEM SUMMARY -->
+
+        <section class="system-banner">
+
+            <div class="system-main">
+
+                <div class="system-shield">
+                    🛡️
+                </div>
+
+                <div>
+
+                    <span class="section-label">
+                        PROTECTED ENDPOINT
+                    </span>
+
+                    <h3 id="systemName">
+                        Loading system...
+                    </h3>
+
+                    <div class="system-meta">
+
+                        <span>
+                            System ID:
+                            <strong id="systemId">
+                                --
+                            </strong>
+                        </span>
+
+                        <span>
+                            Host:
+                            <strong id="hostname">
+                                --
+                            </strong>
+                        </span>
+
+                        <span>
+                            Events:
+                            <strong id="eventCount">
+                                0
+                            </strong>
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="protection-status">
+
+                <span class="status-dot"></span>
+
+                <div>
+
+                    <strong id="protectionStatus">
+                        PROTECTION ACTIVE
+                    </strong>
+
+                    <span>
+                        Recorded filesystem activity
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- EVENT STATISTICS -->
+
+        <section class="metrics-grid">
+
+            <div class="metric-card">
+
+                <div class="metric-top">
+
+                    <span>
+                        CREATE
+                    </span>
+
+                    <span class="metric-icon">
+                        +
+                    </span>
+
+                </div>
+
+                <div
+                    class="metric-number"
+                    id="createCount"
+                >
+                    0
+                </div>
+
+                <div class="metric-bottom">
+                    File creation events
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-top">
+
+                    <span>
+                        MODIFY
+                    </span>
+
+                    <span class="metric-icon">
+                        ✎
+                    </span>
+
+                </div>
+
+                <div
+                    class="metric-number"
+                    id="modifyCount"
+                >
+                    0
+                </div>
+
+                <div class="metric-bottom">
+                    File modification events
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-top">
+
+                    <span>
+                        RENAME
+                    </span>
+
+                    <span class="metric-icon">
+                        ↔
+                    </span>
+
+                </div>
+
+                <div
+                    class="metric-number"
+                    id="renameCount"
+                >
+                    0
+                </div>
+
+                <div class="metric-bottom">
+                    File rename events
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-top">
+
+                    <span>
+                        DELETE
+                    </span>
+
+                    <span class="metric-icon warning">
+                        !
+                    </span>
+
+                </div>
+
+                <div
+                    class="metric-number"
+                    id="deleteCount"
+                >
+                    0
+                </div>
+
+                <div class="metric-bottom">
+                    File deletion events
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPLAY ANALYSIS -->
+
+        <section class="replay-analysis-grid">
+
+            <div class="replay-score-card">
+
+                <div class="replay-score-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            REPLAY ANALYSIS
+                        </span>
+
+                        <h3>
+                            Reconstructed Threat
+                        </h3>
+
+                    </div>
+
+                    <span
+                        class="replay-analysis-badge"
+                        id="replayThreatLevel"
+                    >
+                        LOW
+                    </span>
+
+                </div>
+
+
+                <div class="replay-score-content">
+
+                    <div
+                        class="replay-score-circle"
+                        id="replayScoreCircle"
+                    >
+
+                        <strong id="replayThreatScore">
+                            0
+                        </strong>
+
+                        <span>
+                            / 100
+                        </span>
+
+                    </div>
+
+
+                    <div class="replay-score-details">
+
+                        <div class="score-detail">
+
+                            <span>
+                                Current replay score
+                            </span>
+
+                            <strong id="replayScoreValue">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="score-detail">
+
+                            <span>
+                                Detection state
+                            </span>
+
+                            <strong id="replayDetectionState">
+                                No suspicious activity
+                            </strong>
+
+                        </div>
+
+
+                        <div class="score-detail">
+
+                            <span>
+                                Replay mode
+                            </span>
+
+                            <strong>
+                                Read-only analysis
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="replay-signal-card">
+
+                <div class="replay-score-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            BEHAVIOR SIGNALS
+                        </span>
+
+                        <h3>
+                            Detected Activity
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="signal-grid">
+
+                    <div class="signal-item">
+
+                        <span>
+                            Rapid Modification
+                        </span>
+
+                        <strong id="signalRapid">
+                            OFF
+                        </strong>
+
+                    </div>
+
+
+                    <div class="signal-item">
+
+                        <span>
+                            Mass Rename
+                        </span>
+
+                        <strong id="signalRename">
+                            OFF
+                        </strong>
+
+                    </div>
+
+
+                    <div class="signal-item">
+
+                        <span>
+                            High Entropy
+                        </span>
+
+                        <strong id="signalEntropy">
+                            OFF
+                        </strong>
+
+                    </div>
+
+
+                    <div class="signal-item">
+
+                        <span>
+                            Process Activity
+                        </span>
+
+                        <strong id="signalProcess">
+                            OFF
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPLAY CONTROLS -->
+
+        <section class="panel replay-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="section-label">
+                        EVENT SIMULATION
+                    </span>
+
+                    <h3>
+                        Attack Timeline
+                    </h3>
+
+                </div>
+
+                <span
+                    class="panel-status"
+                    id="replayStatus"
+                >
+                    READY
+                </span>
+
+            </div>
+
+
+            <div class="replay-controls">
+
+                <button
+                    class="primary-btn"
+                    id="playButton"
+                >
+                    ▶ Play Replay
+                </button>
+
+
+                <button
+                    class="secondary-btn"
+                    id="resetButton"
+                >
+                    ↺ Reset
+                </button>
+
+
+                <select
+                    id="speedSelect"
+                    class="speed-select"
+                >
+
+                    <option value="1200">
+                        Speed: Slow
+                    </option>
+
+                    <option
+                        value="700"
+                        selected
+                    >
+                        Speed: Normal
+                    </option>
+
+                    <option value="300">
+                        Speed: Fast
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="progress-container">
+
+                <div class="progress-label">
+
+                    <span>
+                        Replay Progress
+                    </span>
+
+                    <span id="progressText">
+                        0 / 0 • 0%
+                    </span>
+
+                </div>
+
+
+                <div class="progress-track">
+
+                    <div
+                        class="progress-bar"
+                        id="progressBar"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="current-event"
+                id="currentEvent"
+            >
+
+                <div class="current-event-icon">
+                    ▶
+                </div>
+
+                <div>
+
+                    <span>
+                        CURRENT EVENT
+                    </span>
+
+                    <strong>
+                        Ready to replay recorded activity
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- TIMELINE -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="section-label">
+                        FORENSIC TIMELINE
+                    </span>
+
+                    <h3>
+                        Recorded Filesystem Events
+                    </h3>
+
+                </div>
+
+                <span
+                    class="event-total"
+                    id="timelineTotal"
+                >
+                    0 EVENTS
+                </span>
+
+            </div>
+
+
+            <div
+                class="timeline"
+                id="timeline"
+            >
+
+                <div class="timeline-empty">
+                    Loading recorded events...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <footer class="footer">
+
+            <span>
+                RansomShield Security Operations Center
+            </span>
+
+            <span>
+                Attack Replay • Ransomware Detection
+                & Response System • v1.0
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- FLOATING STOP BUTTON -->
+
+<button
+    class="floating-stop-btn"
+    id="stopButton"
+    type="button"
+>
+    ■ Stop Replay
+</button>
+
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+
+<script
+    src="/dashboard/attack-replay.js"
+></script>
+
+</body>
+</html>

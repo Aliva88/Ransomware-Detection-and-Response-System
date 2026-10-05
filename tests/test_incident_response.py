@@ -1,6 +1,9 @@
 from app.core.incident_response import IncidentResponse
 
 
+TEST_SYSTEM_ID = 62
+
+
 def test_critical_detection_creates_incident():
 
     threat_result = {
@@ -14,7 +17,9 @@ def test_critical_detection_creates_incident():
         "extension_changes": 10
     }
 
-    response = IncidentResponse()
+    response = IncidentResponse(
+        system_id=TEST_SYSTEM_ID
+    )
 
     incident = response.handle_detection(
         threat_result,
@@ -40,7 +45,9 @@ def test_non_critical_detection_does_not_create_incident():
         "extension_changes": 0
     }
 
-    response = IncidentResponse()
+    response = IncidentResponse(
+        system_id=TEST_SYSTEM_ID
+    )
 
     incident = response.handle_detection(
         threat_result,

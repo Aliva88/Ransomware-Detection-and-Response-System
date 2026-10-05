@@ -8,6 +8,9 @@ from app.core.evidence_manager import EvidenceManager
 from app.core.quarantine_manager import QuarantineManager
 
 
+TEST_SYSTEM_ID = 65
+
+
 def test_incident_response_pipeline(tmp_path):
 
     config = load_config()
@@ -50,7 +53,9 @@ def test_incident_response_pipeline(tmp_path):
     )
 
     # Incident creation
-    response = IncidentResponse()
+    response = IncidentResponse(
+        system_id=TEST_SYSTEM_ID
+    )
 
     incident = response.handle_detection(
         threat_result,

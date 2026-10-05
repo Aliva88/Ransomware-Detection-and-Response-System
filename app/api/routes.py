@@ -583,10 +583,15 @@ def set_system_protection(
                         ),
                     }
 
-                monitor_folder = folders[0]
+                '''monitor_folder = folders[0]
 
                 monitor_observer = start_monitor(
-                    monitor_folder,system_id=system.id
+                    monitor_folder,
+                    system_id=system.id
+                )'''
+                monitor_observer = start_monitor(
+                    folders,
+                    system_id=system.id
                 )
 
             system.monitoring = True
@@ -685,10 +690,15 @@ def start_protection():
                     ),
                 }
 
-            monitor_folder = folders[0]
+            '''monitor_folder = folders[0]
 
             monitor_observer = start_monitor(
-                monitor_folder,system_id=system.id
+                monitor_folder,
+                system_id=system.id
+            )'''
+            monitor_observer = start_monitor(
+                folders,
+                system_id=system.id
             )
 
         system.monitoring = True
@@ -723,6 +733,23 @@ def stop_protection():
 
     try:
 
+        # -----------------------------------------
+        # STOP FILE MONITOR
+        # -----------------------------------------
+
+        if (
+            monitor_observer is not None
+            and monitor_observer.is_alive()
+        ):
+            monitor_observer.stop()
+            monitor_observer.join(timeout=5)
+
+        monitor_observer = None
+
+        # -----------------------------------------
+        # UPDATE SYSTEM STATUS
+        # -----------------------------------------
+
         systems = (
             db.query(System)
             .filter(
@@ -740,6 +767,8 @@ def stop_protection():
 
         return {
             "status": "inactive",
+            "monitoring": False,
+            "monitor_running": False,
             "message": (
                 "RansomShield protection "
                 "stopped successfully."
@@ -748,8 +777,6 @@ def stop_protection():
 
     finally:
         db.close()
-
-
 # ============================================================
 # SYSTEM STATUS
 # ============================================================
@@ -812,8 +839,33 @@ def get_incidents():
 
     try:
 
+        # Get the currently monitored system.
+        system = (
+            db.query(System)
+            .filter(
+                System.monitoring == True
+            )
+            .order_by(
+                System.last_seen.desc()
+            )
+            .first()
+        )
+
+        if not system:
+            return {
+                "status": "ok",
+                "count": 0,
+                "incidents": [],
+            }
+
+        # IMPORTANT:
+        # Only return incidents belonging to the
+        # currently monitored system.
         incidents = (
             db.query(Incident)
+            .filter(
+                Incident.system_id == system.id
+            )
             .order_by(
                 Incident.timestamp.desc()
             )
@@ -1020,13 +1072,27 @@ def get_dashboard():
             system.id if system else None,
         )
 
-        incidents = (
-            db.query(Incident)
-            .order_by(
-                Incident.timestamp.desc()
+        # ----------------------------------------------------
+        # IMPORTANT:
+        # Only load incidents belonging to the current system.
+        # ----------------------------------------------------
+
+        if system:
+
+            incidents = (
+                db.query(Incident)
+                .filter(
+                    Incident.system_id == system.id
+                )
+                .order_by(
+                    Incident.timestamp.desc()
+                )
+                .all()
             )
-            .all()
-        )
+
+        else:
+
+            incidents = []
 
         monitor_status = (
             monitor_observer is not None
@@ -1356,6 +1422,66 @@ def generate_csv_report():
                 )
             },
         )
+
+    finally:
+        db.close()
+        # ============================================================
+# ATTACK REPLAY
+# ============================================================
+
+@router.get("/attack-replay")
+def get_attack_replay(
+    system_id: int | None = None,
+    limit: int = 200
+):
+    """
+    Return recent filesystem events for Attack Replay.
+
+    This endpoint is read-only.
+    It does not modify or delete any event data.
+    """
+
+    db = SessionLocal()
+
+    try:
+
+        query = (
+            db.query(Event)
+            .order_by(
+                Event.timestamp.asc()
+            )
+        )
+
+        if system_id is not None:
+            query = query.filter(
+                Event.system_id == system_id
+            )
+
+        limit = max(
+            1,
+            min(limit, 1000)
+        )
+
+        events = (
+            query
+            .limit(limit)
+            .all()
+        )
+
+        return {
+            "status": "ok",
+            "count": len(events),
+            "events": [
+                {
+                    "id": event.id,
+                    "system_id": event.system_id,
+                    "event_type": event.event_type,
+                    "file_path": event.file_path,
+                    "timestamp": event.timestamp,
+                }
+                for event in events
+            ],
+        }
 
     finally:
         db.close()

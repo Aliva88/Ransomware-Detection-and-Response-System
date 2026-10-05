@@ -4,10 +4,12 @@ app:
 
 monitoring:
   folders:
-    - "data/sandbox"
+    - "C:/Users/aliva/OneDrive/Desktop"
+    - "C:/Users/aliva/OneDrive/Dokumen"
+    - "C:/Users/aliva/OneDrive/Gambar"
+    - "C:/Users/aliva/OneDrive/Scans"
 
-  simulation_mode: true
-
+  simulation_mode: false
   sliding_window_seconds: 60
 
 detection:

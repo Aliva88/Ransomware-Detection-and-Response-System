@@ -37,8 +37,9 @@ class IncidentResponse:
         # -----------------------------------------
 
         existing_incident = get_open_incident(
-            incident_type="Ransomware Activity"
-        )
+    incident_type="Ransomware Activity",
+    system_id=self.system_id
+)
 
         if existing_incident is not None:
 

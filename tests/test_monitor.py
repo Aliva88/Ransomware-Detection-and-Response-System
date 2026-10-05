@@ -6,21 +6,35 @@ from app.detectors.file_monitor import start_monitor
 
 SANDBOX = Path("data/sandbox")
 
+# Test system identifier.
+# The monitor only needs this value to associate
+# detected activity with a system.
+TEST_SYSTEM_ID = "TEST-SYSTEM-001"
 
-observer = start_monitor(SANDBOX)
 
-try:
-    print("RDRS file monitor is running...")
-    print("Watching:", SANDBOX.resolve())
-    print("Press Ctrl+C to stop.")
+def main():
+    observer = start_monitor(
+        SANDBOX,
+        TEST_SYSTEM_ID
+    )
 
-    while True:
-        time.sleep(1)
+    try:
+        print("RDRS file monitor is running...")
+        print("Watching:", SANDBOX.resolve())
+        print("System ID:", TEST_SYSTEM_ID)
+        print("Press Ctrl+C to stop.")
 
-except KeyboardInterrupt:
-    print("\nStopping monitor...")
+        while True:
+            time.sleep(1)
 
-finally:
-    observer.stop()
-    observer.join()
-    print("Monitor stopped safely.")
+    except KeyboardInterrupt:
+        print("\nStopping monitor...")
+
+    finally:
+        observer.stop()
+        observer.join()
+        print("Monitor stopped safely.")
+
+
+if __name__ == "__main__":
+    main()

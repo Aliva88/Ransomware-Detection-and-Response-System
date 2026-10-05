@@ -5,6 +5,8 @@ from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 from app.core.logging import logger
+from app.database import SessionLocal
+from app.models import Event
 from app.core.config_loader import load_config
 from app.core.entropy import calculate_entropy
 from app.core.threat_scorer import ThreatScorer
@@ -22,8 +24,8 @@ from app.process_monitor import get_process_signals
 # are random, so tiny files are skipped.
 MIN_ENTROPY_FILE_SIZE = 1024
 
-# These formats are ALREADY compressed, so their content always
-# looks random. Measuring them would cause false alarms.
+# These formats are already compressed, so their content can
+# naturally look random. Measuring them can cause false alarms.
 SKIP_ENTROPY_EXTENSIONS = {
     ".zip", ".rar", ".7z", ".gz", ".bz2", ".xz", ".tgz", ".cab",
     ".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic",
@@ -37,8 +39,7 @@ SKIP_ENTROPY_EXTENSIONS = {
 def measure_entropy(file_path, event_type):
     """
     Return the entropy (0-8) of a file's content, or None when it
-    should not be measured (deleted, folder, tiny, already
-    compressed, or not readable).
+    should not be measured.
     """
 
     if event_type == "DELETE":
@@ -54,7 +55,10 @@ def measure_entropy(file_path, event_type):
         if file_path.stat().st_size < MIN_ENTROPY_FILE_SIZE:
             return None
 
-        return round(calculate_entropy(str(file_path)), 3)
+        return round(
+            calculate_entropy(str(file_path)),
+            3
+        )
 
     except (OSError, PermissionError):
         # File was moved/locked while we were looking at it.
@@ -78,6 +82,47 @@ class RDRSEventHandler(FileSystemEventHandler):
         self.system_id = system_id
 
         self.last_incident_score = 0
+
+    def _save_event_to_database(
+        self,
+        event_type,
+        file_path
+    ):
+        """
+        Save a filesystem event to the events table.
+
+        Database failure must not stop the detection engine.
+        """
+
+        db = SessionLocal()
+
+        try:
+            db_event = Event(
+                system_id=self.system_id,
+                event_type=event_type,
+                file_path=str(file_path),
+                timestamp=datetime.utcnow()
+            )
+
+            db.add(db_event)
+            db.commit()
+
+            logger.info(
+                "File event saved to database: "
+                f"{event_type} - {file_path}"
+            )
+
+        except Exception as e:
+
+            db.rollback()
+
+            logger.error(
+                "Failed to save file event to database: "
+                f"{e}"
+            )
+
+        finally:
+            db.close()
 
     def _record_event(
         self,
@@ -107,6 +152,19 @@ class RDRSEventHandler(FileSystemEventHandler):
                 old_file_path.suffix.lower()
             )
 
+        # -----------------------------------------
+        # 1. Save event to database
+        # -----------------------------------------
+
+        self._save_event_to_database(
+            event_type=event_type,
+            file_path=file_path
+        )
+
+        # -----------------------------------------
+        # 2. Calculate entropy
+        # -----------------------------------------
+
         entropy = measure_entropy(
             file_path,
             event_type
@@ -120,7 +178,7 @@ class RDRSEventHandler(FileSystemEventHandler):
         )
 
         # -----------------------------------------
-        # 1. Add file event to Detection Engine
+        # 3. Add file event to Detection Engine
         # -----------------------------------------
 
         self.detection_engine.add_event(
@@ -128,7 +186,7 @@ class RDRSEventHandler(FileSystemEventHandler):
         )
 
         # -----------------------------------------
-        # 2. Analyze file activity
+        # 4. Analyze file activity
         # -----------------------------------------
 
         detection_result = (
@@ -140,7 +198,7 @@ class RDRSEventHandler(FileSystemEventHandler):
         )
 
         # -----------------------------------------
-        # 3. Collect current process activity
+        # 5. Collect current process activity
         # -----------------------------------------
 
         process_result = (
@@ -152,7 +210,7 @@ class RDRSEventHandler(FileSystemEventHandler):
         )
 
         # -----------------------------------------
-        # 4. Calculate combined threat score
+        # 6. Calculate combined threat score
         # -----------------------------------------
 
         threat_result = (
@@ -167,7 +225,7 @@ class RDRSEventHandler(FileSystemEventHandler):
         )
 
         # -----------------------------------------
-        # 5. Save score when suspicious activity
+        # 7. Save score when suspicious activity
         # -----------------------------------------
 
         if detection_result["suspicious"]:
@@ -185,7 +243,7 @@ class RDRSEventHandler(FileSystemEventHandler):
             )
 
             # -------------------------------------
-            # 6. Incident Response
+            # 8. Incident Response
             # -------------------------------------
 
             incident = (
@@ -257,7 +315,7 @@ class RDRSEventHandler(FileSystemEventHandler):
             )
 
 
-def start_monitor(folder, system_id):
+'''def start_monitor(folder, system_id):
 
     folder_path = Path(folder)
 
@@ -355,6 +413,125 @@ def start_monitor(folder, system_id):
 
     logger.info(
         f"File monitoring started: {folder_path}"
+    )
+
+    return observer'''
+def start_monitor(folders, system_id):
+    """
+    Start real-time monitoring for one or more folders.
+    A single watchdog Observer can monitor multiple folders.
+    """
+
+    # -----------------------------------------
+    # Normalize folder input
+    # -----------------------------------------
+
+    if isinstance(folders, (str, Path)):
+        folders = [folders]
+
+    folder_paths = [
+        Path(folder).expanduser()
+        for folder in folders
+    ]
+
+    # -----------------------------------------
+    # Validate monitoring folders
+    # -----------------------------------------
+
+    for folder_path in folder_paths:
+        if not folder_path.exists():
+            raise FileNotFoundError(
+                f"Monitoring folder does not exist: "
+                f"{folder_path}"
+            )
+
+        if not folder_path.is_dir():
+            raise NotADirectoryError(
+                f"Monitoring path is not a directory: "
+                f"{folder_path}"
+            )
+
+    # -----------------------------------------
+    # Load configuration
+    # -----------------------------------------
+
+    config = load_config()
+
+    monitoring_config = config["monitoring"]
+    detection_config = config["detection"]
+    scoring_config = config["scoring"]
+
+    # -----------------------------------------
+    # Detection Engine
+    # -----------------------------------------
+
+    detection_engine = DetectionEngine(
+        window_seconds=monitoring_config["sliding_window_seconds"],
+        modified_files_threshold=detection_config["modified_files_threshold"],
+        rename_threshold=detection_config["rename_threshold"],
+        extension_change_threshold=detection_config["extension_change_threshold"],
+        entropy_threshold=detection_config.get(
+            "entropy_threshold",
+            7.5
+        ),
+        high_entropy_files_threshold=detection_config.get(
+            "high_entropy_files_threshold",
+            5
+        )
+    )
+
+    # -----------------------------------------
+    # Threat Scoring
+    # -----------------------------------------
+
+    threat_scorer = ThreatScorer(scoring_config)
+
+    # -----------------------------------------
+    # Incident Response
+    # -----------------------------------------
+
+    incident_response = IncidentResponse(
+        system_id=system_id,
+        critical_threshold=80
+    )
+
+    # -----------------------------------------
+    # Single Observer
+    # -----------------------------------------
+
+    observer = Observer()
+
+    handler = RDRSEventHandler(
+        detection_engine=detection_engine,
+        threat_scorer=threat_scorer,
+        incident_response=incident_response,
+        system_id=system_id
+    )
+
+    # -----------------------------------------
+    # Schedule ALL folders
+    # -----------------------------------------
+
+    for folder_path in folder_paths:
+        observer.schedule(
+            handler,
+            str(folder_path),
+            recursive=True
+        )
+
+        logger.info(
+            f"File monitoring scheduled: {folder_path}"
+        )
+
+    # -----------------------------------------
+    # Start Observer
+    # -----------------------------------------
+
+    observer.start()
+
+    logger.info(
+        "Real-time file monitoring started for "
+        f"{len(folder_paths)} folder(s)."
     )
 
     return observer

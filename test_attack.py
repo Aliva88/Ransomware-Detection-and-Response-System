@@ -2,43 +2,66 @@ from pathlib import Path
 import os
 import time
 
+
 sandbox = Path("data/sandbox")
 
-sandbox.mkdir(parents=True, exist_ok=True)
 
-print("Creating safe test files...")
+def run_attack_simulation():
+    sandbox.mkdir(parents=True, exist_ok=True)
 
-test_files = []
+    print("Creating safe test files...")
 
-for i in range(50):
-    file_path = sandbox / f"ransom_test_{i}.txt"
-    file_path.write_text(
-        "RansomShield safe detection test file.",
-        encoding="utf-8"
-    )
-    test_files.append(file_path)
+    test_files = []
 
-print("50 test files created.")
+    for i in range(50):
+        file_path = sandbox / f"ransom_test_{i}.txt"
 
-time.sleep(2)
+        # Remove an old test file if it exists
+        if file_path.exists():
+            file_path.unlink()
 
-print("Simulating suspicious file modification...")
+        locked_path = sandbox / f"ransom_test_{i}.locked"
 
-for file_path in test_files:
-    file_path.write_bytes(os.urandom(20000))
+        # Remove an old renamed test file if it exists
+        if locked_path.exists():
+            locked_path.unlink()
 
-print("50 files modified.")
+        file_path.write_text(
+            "RansomShield safe detection test file.",
+            encoding="utf-8"
+        )
 
-time.sleep(2)
+        test_files.append(file_path)
 
-print("Simulating mass rename...")
+    print("50 test files created.")
 
-for file_path in test_files:
-    locked_path = file_path.with_suffix(".locked")
-    file_path.rename(locked_path)
+    time.sleep(2)
 
-print("50 files renamed to .locked")
+    print("Simulating suspicious file modification...")
 
-print()
-print("SAFE TEST COMPLETE")
-print("Only data/sandbox was used.")
+    for file_path in test_files:
+        file_path.write_bytes(os.urandom(20000))
+
+    print("50 files modified.")
+
+    time.sleep(2)
+
+    print("Simulating mass rename...")
+
+    for file_path in test_files:
+        locked_path = file_path.with_suffix(".locked")
+
+        if locked_path.exists():
+            locked_path.unlink()
+
+        file_path.rename(locked_path)
+
+    print("50 files renamed to .locked")
+
+    print()
+    print("SAFE TEST COMPLETE")
+    print("Only data/sandbox was used.")
+
+
+if __name__ == "__main__":
+    run_attack_simulation()

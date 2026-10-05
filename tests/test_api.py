@@ -14,7 +14,7 @@ def test_health_endpoint():
 
     data = response.json()
 
-    assert data["status"] == "running"
+    assert data["status"] == "ok"
 
 
 def test_config_endpoint():
@@ -25,10 +25,15 @@ def test_config_endpoint():
 
     data = response.json()
 
-    assert "app" in data
-    assert "monitoring" in data
-    assert "detection" in data
-    assert "scoring" in data
+    assert data["status"] == "ok"
+    assert "config" in data
+
+    config = data["config"]
+
+    assert "app" in config
+    assert "monitoring" in config
+    assert "detection" in config
+    assert "scoring" in config
 
 
 def test_status_endpoint():
@@ -40,9 +45,9 @@ def test_status_endpoint():
     data = response.json()
 
     assert data["status"] == "active"
-    assert data["simulation_mode"] is True
-    assert "threat_score" in data
-    assert "threat_level" in data
+    assert "monitoring" in data
+    assert "monitor_running" in data
+    assert "system" in data
 
 
 def test_incidents_endpoint():
@@ -53,10 +58,17 @@ def test_incidents_endpoint():
 
     data = response.json()
 
-    assert isinstance(data, list)
+    assert data["status"] == "ok"
+    assert "count" in data
+    assert "incidents" in data
 
-    if len(data) > 0:
-        incident = data[0]
+    incidents = data["incidents"]
+
+    assert isinstance(incidents, list)
+
+    if len(incidents) > 0:
+
+        incident = incidents[0]
 
         assert "id" in incident
         assert "incident_type" in incident
@@ -74,12 +86,8 @@ def test_dashboard_endpoint():
 
     data = response.json()
 
-    assert data["system"] == (
-        "Ransomware Detection and Response System"
-    )
-
+    assert "system" in data
     assert data["status"] == "active"
-    assert data["simulation_mode"] is True
 
     assert "threat" in data
     assert "score" in data["threat"]
